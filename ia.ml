@@ -1,5 +1,7 @@
 open Sys
+open Common_types
 
+type move = Single of movement | Power of int
 let phrases_string  =
     let phrase_file = open_in Sys.argv.(2) in
     let phrases_acc = ref [] in
@@ -14,7 +16,6 @@ let phrases_string  =
 (*
 = [| "ph'nglui mglw'nafh cthulhu r'lyeh wgah'nagl fhtagn."; "case nightmare green"; "john bigboote"; "blue hades"; "tsathoggua"; "planet 10";"ia! ia!";"yuggoth";"r'lyeh"; "ei!" |]
 *)
-open Common_types
 
 let split_str = Str.split (Str.regexp "")
 
@@ -30,6 +31,13 @@ let convert_move s =
 let phrases = Array.map
     (fun s -> List.map convert_move (split_str s))
     phrases_string
+
+let rec flatten_path path = match path with
+    | [] -> ([], [])
+    | Single m :: q -> let a, b = flatten_path q
+        in (m :: a, b)
+    | Power i :: q -> let a, b = flatten_path q
+        in (List.rev phrases.(i) @ a, i :: b)
 
 let leaf_score_phrases phrases_list =
     let npow = Array.length phrases in
@@ -84,7 +92,6 @@ let command_of_move m = match m with
 let command_of_path p =
     String.concat "" (List.map command_of_move  (List.rev p))
 
-
 let can_score_two_lines = ref false
 let count_full_lines board =
     let cleared = ref 0 in
@@ -95,10 +102,10 @@ let count_full_lines board =
         let current_in = ref false in
         let count_not_empty = ref 0 in
         for x = 0 to w-1 do
-            if board.(x).(y) = CURRENT
-            then current_in := true;
-            if board.(x).(y) <> EMPTY
-            then incr count_not_empty
+            match board.(x).(y) with
+            | CURRENT _ -> current_in := true;
+            | EMPTY -> ()
+            | _ -> incr count_not_empty
         done;
         match w - !count_not_empty with
         | 0 -> incr cleared
@@ -194,13 +201,12 @@ let pond_comp = if Array.length Sys.argv >= n_pond
                 then -(int_of_string Sys.argv.(other_args+5)) else -100
 
 let score_leaf board bh leaf =
-    let pos, path, powph = leaf in
+    let pos, full_path = leaf in
+    let path, powh = flatten_path full_path in
     let pm = pos.p_members in
-    let score_power = leaf_score_phrases powph in
+    let score_power = leaf_score_phrases powh in
     
-    Piece.place board pm;
-
-
+    Piece.place board pos;
     (*
     let n_comp = Graph.connected_components board 5 pos in
     *)
@@ -292,6 +298,8 @@ let () =
     for i = 0 to Array.length p.sourceSeeds-1 do
     *)
 
+    let phrases_occ = Array.make (Array.length phrases) 0 in
+
     let i = int_of_string Sys.argv.(3) in
 
 
@@ -335,7 +343,7 @@ let () =
 
             let board_height = Board.height board in
 
-            Piece.place board pm;
+            Piece.place board pi;
             Board.refresh board pm;
             (*
             Board.print board;
@@ -345,11 +353,11 @@ let () =
 
             let visited = ref [] in
             let tovisit = Queue.create () in
-            Queue.add (pi,[],[Piece.hash pi],[]) tovisit;
+            Queue.add (pi,[],[Piece.hash pi]) tovisit;
             let leaves = ref [] in
 
             while not (Queue.is_empty tovisit) do
-                let pos, path, hashes, powph = Queue.take tovisit in
+                let pos, path, hashes = Queue.take tovisit in
                 
                 if not (List.mem (Piece.hash pos) !visited) 
                 then begin
@@ -361,7 +369,7 @@ let () =
                             let p2, new_hashes = Piece.move_pow board hashes
                                 pos pow [pos] in
                             Queue.add 
-                                (p2, List.rev pow @ path, new_hashes @ hashes, pow_id::powph) tovisit
+                                (p2, Power pow_id :: path, new_hashes @ hashes) tovisit
                         with Piece.InvalidPow -> ()
                     ) (Array.init (Array.length phrases) (fun i -> i));
 
@@ -370,8 +378,7 @@ let () =
                         let p2 = Piece.move pos m in
                         if Piece.fits board p2.p_members
                         then (if not (List.mem (Piece.hash p2) hashes)
-                            then Queue.add (p2, m::path, Piece.hash p2 ::
-                                hashes, powph) tovisit) 
+                            then Queue.add (p2, Single m::path, Piece.hash p2 :: hashes) tovisit) 
                         else invalid_moves := m::!invalid_moves)
                             (*
                                  T
@@ -386,30 +393,48 @@ let () =
                     then begin
                         let bb = Geometry.bbox pos.p_members in
                         if bb.bottom >= board_height-1 &&
-                            not (List.exists (fun (p,_,_) -> Piece.eq pos p) !leaves)
-                        then leaves := (pos, (List.hd (!invalid_moves))::path, powph) :: !leaves
+                            not (List.exists (fun (p,_) -> Piece.eq pos p) !leaves)
+                        then leaves := 
+                                (pos, Single (List.hd (!invalid_moves)) :: path) :: !leaves
                     end
                 end
             done;
 
-            let pos, path, powph = best_leaf board board_height !leaves in
+            let pos, full_path = best_leaf board board_height !leaves in
+
+            let path, powph = flatten_path full_path in
 
             (* Printf.eprintf "Path %s\n" (string_of_path path); *)
             let rpos = ref pi in
+            let wait_time = 25.0 in
             Board.refresh board pm;
-            List.iter (fun m -> 
-                wait 10.0;
-                Board.refresh board !rpos.p_members;
-                rpos := Piece.move !rpos m;
-                Piece.place board !rpos.p_members;
-                Board.refresh board !rpos.p_members;
-                (* Board.print board; *)
-                Piece.unplace board !rpos.p_members;
-                (*
-                Gui.flush p.id seed;
-                *)
-
-                ) (List.rev (List.tl path));
+            List.iter (fun exm -> 
+                match exm with
+                | Single m ->
+                    wait wait_time;
+                    Board.refresh board !rpos.p_members;
+                    rpos := Piece.move !rpos m;
+                    Piece.place board !rpos;
+                    Board.refresh board !rpos.p_members;
+                    (* Board.print board; *)
+                    Piece.unplace board !rpos.p_members;
+                | Power i ->
+                    let p = phrases.(i) in
+                    let pt = phrases_string.(i) in
+                    phrases_occ.(i) <- 1 + phrases_occ.(i);
+                    Gui.bonus_text 
+                        (string_of_int phrases_occ.(i) ^ "x " ^ pt);
+                    List.iter (fun m ->
+                        wait wait_time;
+                        Board.refresh board !rpos.p_members;
+                        rpos := Piece.move !rpos m;
+                        Piece.place board !rpos;
+                        Board.refresh board !rpos.p_members;
+                        (* Board.print board; *)
+                        Piece.unplace board !rpos.p_members)
+                        p;
+                    Gui.bonus_text  ""
+                ) (List.rev (List.tl full_path));
 
             Piece.lock board pos;
             Board.refresh board pos.p_members;

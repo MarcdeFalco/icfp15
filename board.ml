@@ -19,7 +19,7 @@ let init w h filled =
     b
 
 let string_of_cell c = match c with
-    EMPTY -> "." | LOCKED _ -> "#" | CURRENT -> "O" | FILLED -> "*"
+    EMPTY -> "." | LOCKED _ -> "#" | CURRENT _ -> "O" | FILLED -> "*"
 
 let refresh b l =
     let h = Array.length b.(0) in

@@ -26,7 +26,7 @@ let set_color cs =
     let col = match cs with
         | EMPTY -> fond
         | LOCKED c -> c
-        | CURRENT -> current
+        | CURRENT c -> c
         | FILLED -> filled
         in 
     Graphics.set_color col
@@ -93,11 +93,13 @@ let score scr inc pscr =
             pscr (scr +pscr))
 
 let bonus_text s =
-    Graphics.set_text_size 30;
+    Graphics.set_text_size 15;
+    (*
     let tw, th = Graphics.text_size s in
-    Graphics.moveto ((!sw-tw)/2) ((!sh-th)/2);
+    *)
+    Graphics.moveto 15 30;
     Graphics.set_color Graphics.white;
-    Graphics.fill_rect 0 ((!sh-th)/2) !sw th;
+    Graphics.fill_rect 15 30 300 15;
     Graphics.set_color Graphics.red;
     Graphics.draw_string s
 

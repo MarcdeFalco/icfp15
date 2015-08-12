@@ -26,8 +26,6 @@ let fits board members =
     done;
     !fit
 
-let place board members = List.iter (fun c -> board.(c.x).(c.y) <- CURRENT) 
-    members
 let unplace board members = List.iter (fun c -> board.(c.x).(c.y) <- EMPTY)
     members
 
@@ -41,6 +39,13 @@ let unit_color = [|
 
 let nunit_color = Array.length unit_color
 
+let place board piece = 
+    let id = piece.unt.id in
+    let col = Gui.get_color 
+        unit_color.(id mod nunit_color) in
+    List.iter (fun c -> board.(c.x).(c.y) <- CURRENT col)
+        piece.p_members
+ 
 let lock board piece = 
     let id = piece.unt.id in
     let col = Gui.get_color 
