@@ -8,7 +8,7 @@ The team
 The TaupeGoons teams started this year with four members.
 
 * Marc
-* Jean-Julien 
+* Jean-Julien (as JJ)
 * Loic who started to work by himself and eventually submitted under the GaupeToons team
 * Laurent who had some computer issues which lead him to forfeit
 
@@ -42,7 +42,7 @@ Then we score each of these final positions using various criteria:
 
 and we choose the best one to play it.
 
-For gathering the different criteria into one unique value we needed a weighted sum. To find the best parameters to use, Jean-Julien designed a genetic programming finder. He did find a good one that we used in the final submission.
+For gathering the different criteria into one unique value we needed a weighted sum. To find the best parameters to use, JJ designed a genetic programming finder. He did find a good one that we used in the final submission.
 
 Finally, to handle multitasking and scheduling a little Python script was made. The approach was to try first the small board.
 
@@ -76,10 +76,10 @@ Loic came to Marc's house for a BBQ and it was decided that Loic could work by h
 The Ocaml version was almost working when Laurent started to work on finding phrases of power in a solution, it was the last time we heard of him as we learned after the end of the contest that he was trapped in the black hole of an ubuntu installation ;-)
 
 ### Saturday evening
-The Ocaml version that Marc did was working and used a lot of different parameters for the scoring function. Jean-Julien started to work on a genetic algorithm to find the best parameters.
+The Ocaml version that Marc did was working and used a lot of different parameters for the scoring function. JJ started to work on a genetic algorithm to find the best parameters.
 
 ### Sunday morning
-Marc found how to include phrases of power in the solver by making them extended moves, adding yet another parameter for Jean-Julien optimizer.
+Marc found how to include phrases of power in the solver by making them extended moves, adding yet another parameter for JJ optimizer.
 
 ### Sunday afternoon and evening
 The hunt for power phrases began and Marc did small optimizations of the solver.
@@ -94,7 +94,7 @@ We lost a day by choosing Python and then switching to Ocaml.
 
 Marc thought that having a working base of code would help others working on the real issue. It was wrong because it ended up being too lengthy to get into and other team members had issues modifying an already long file.
 
-It's the real reason of the GaupeToons split and it's noteworthy that Loic did this well while starting really late (basically Saturday nigh).
+It's the real reason of the GaupeToons split and it's noteworthy that Loic did this well while starting really late (basically Saturday night).
 
 ## Marc's review of the contest
 
@@ -114,3 +114,18 @@ It's the real reason of the GaupeToons split and it's noteworthy that Loic did t
 
 So for me it was not a great year. But I'd say I'm biased because the contest teaser hinted at 2006 or 2007 type of contest (computational archeology, turing machines, ...) and I was really hyped. Therefore when the task was announced I felt quite disappointed.
 
+## JJ's review of the constest
+
+### Pros
+
+* As a first programming contest in team experience, it has been a really good one, even if I had difficulties following Marc's speed.
+* Working in team on such a short notice was insightful on the difficulties you could experience in team project.
+* I've been amazed by Marc ability to write working code quickly and efficiently !
+
+### Cons
+
+* 3 days is really too short ! I would have loved having 15 days to be able to develop my own algotrithm and be able to find other ways to tackle the problem. I'm sure we could have done better knowing we had more time in order to explore other (possibly meaningless) algorithms.
+* There have been a lot of things to do but they could not really be separated so that only the one that initialy wrote the code could manage to adapt it and I felt quite useless for a while before thinking I could made a parameter survey to improve the results.
+* Working together is not easy and perhaps using tools like git could have been helpful. Dropbox was great to share rapidly files but you never know on what to work and the directory rapidly becomes rapidly messy...
+
+As a conclusion, it has been a great experience to be part of the team. See you next year ! :o)
