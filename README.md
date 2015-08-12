@@ -47,9 +47,12 @@ For gathering the different criteria into one unique value we needed a weighted 
 Finally, to handle multitasking and scheduling a little Python script was made. The approach was to try first the small board.
 
 ### Videos of some of ours solutions
-* [![Problem 7](http://img.youtube.com/vi/npVK8Q8moA8/0.jpg)](http://www.youtube.com/watch?v=npVK8Q8moA8)
-* [![Problem 12](http://img.youtube.com/vi/Wd1MTq7aXVA/0.jpg)](http://www.youtube.com/watch?v=Wd1MTq7aXVA)
-* [![Problem 18](http://img.youtube.com/vi/wVeUVFWgGy0/0.jpg)](http://www.youtube.com/watch?v=wVeUVFWgGy0)
+* Problem 0 seed 0  [![Problem 0 Seed 0](http://j.gifs.com/yEG3n7.gif)](https://www.youtube.com/watch?v=WnnuaNzEVeE)
+* Problem 3 seed 0 [![Problem 3 Seed 0](http://j.gifs.com/yobx4e.gif)](https://www.youtube.com/watch?v=4Xtz4zkwIt4)
+* Problem 3 seed 6094 [![Problem 3 seed 6094](http://j.gifs.com/vZ4Rz8.gif)](https://www.youtube.com/watch?v=fj8jl6IvFDM)
+* Problem 5 seed 15577 [![Problem 5 seed 15577](http://j.gifs.com/vOblOl.gif)](https://www.youtube.com/watch?v=sTazabA9CoI)
+* Problem 5 seed 32719 [![Problem 5 seed 32719](http://j.gifs.com/ywVAaZ.gif)](https://www.youtube.com/watch?v=nm8VplRLwBc)
+* Problem 7 seed 0 [![Problem 7 seed 0](http://j.gifs.com/vJ0oz1.gif)](https://www.youtube.com/watch?v=YFIu5RvM2sE)
 
 ## What we did during the contest
 ### Friday afternoon
