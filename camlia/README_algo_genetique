@@ -1,0 +1,20 @@
+Pour utiliser l'algorithme génétique de manière à trouver les bons paramètres, 
+il faut modifier deux trois choses:
+
+* Initialiser la bonne base de donnée en faisant tourner le script 
+initialise_BDD.py en changeant le nom de BDD_FILE au nom de fichier voulu.
+
+* Changer la même variable BDD_FILE dans algo_genetique.py pour que cela corresponde
+
+* Changer la variable PROBLEMES pour signaler les problèmes sur lesquels vous 
+voulez que l'algorithme génétique essaie d'optimiser les paramètres.
+
+
+Après, il ne reste plus qu'à exécuter algo_genetique.py et attendre patiemment 
+que les générations se forment. Normalement, on commence à trouver de 
+meilleurs résultats à partir de la troisième génération environ. 
+
+Les résultats sont stockés dans la base de données BDD_FILE et l'on peut 
+rassembler les "meilleurs" de chaque problème avec le petit script 
+trouve_meilleur_candidat.py où il faudra changer la variable bdd pour y mettre 
+le bon nom de la base de données à explorer.
