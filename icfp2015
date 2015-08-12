@@ -1,0 +1,100 @@
+#!/usr/bin/env python3.4
+import argparse
+import json
+import time
+import sys
+from subprocess import PIPE, Popen
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-f", type=str, help="problem_file", action='append',default=[])
+parser.add_argument("-t", type=int, help="time_limit", default=0)
+parser.add_argument("-m", type=int, help="mem_limit", default=0)
+parser.add_argument("-c", type=int, help="cores", default=1)
+parser.add_argument("-p", type=str, help="phrases", action='append', default=[])
+parser.add_argument("-s", type=str, help="stamp", default='')
+args = parser.parse_args()
+
+time_limit = args.t
+start_of_batch = time.time()
+problems = args.f
+phrases = args.p
+cores = args.c
+stamp = args.s
+
+magic = list(map(str, [7,7,1,4,4,4]))
+
+phrases.sort(key=lambda s: -len(s))
+open('phrases.txt','w').write('\n'.join(phrases))
+
+def normalize_phrase(s):
+    v = [ "p'!.03", "bcefy2", "aghij4",
+            "lmno 5", "dqrvz1", "kstuwx" ]
+    s2 = ''
+    for c in s:
+        for sv in v:
+            if c in sv:
+                s2 += sv[0]
+    return s2
+
+power = 0
+def optimize(commands):
+    global power
+    for phrase in phrases:
+        n_phrase = normalize_phrase(phrase)
+        power += commands.count(n_phrase)
+        commands = commands.replace(n_phrase, phrase)
+    return commands
+
+tasks = []
+for problem in problems:
+    problem_json = json.loads(open(problem).read())
+    cost = problem_json["height"] * problem_json["width"]
+    for seed in problem_json['sourceSeeds']:
+        tasks.append( (cost, problem, problem_json, seed) )
+    tasks.sort(key=lambda t: -t[0])
+
+computed = []
+computing = {}
+while True:
+    if len(tasks) == 0 and len(computing) == 0:
+        break
+
+    if time_limit != 0 and time.time() - start_of_batch >= time_limit - 0.5:
+        break
+
+    finished = []
+    for pid in computing:
+        task, process, commands = computing[pid]
+        process.poll()
+        if process.returncode is not None:
+            finished.append(pid)
+        commands = commands + (process.stdout.readline().strip()).decode('ascii')
+
+        computing[pid] = (task, process, commands)
+    for pid in finished:
+        task, process, commands = computing[pid]
+        computed.append( (task, commands) )
+        del computing[pid]
+
+    while len(tasks) > 0 and len(computing) < cores:
+        task = tasks.pop()
+        args = [ './ia.native', task[1], 'phrases.txt', str(task[3]) ] + magic
+        sys.stderr.write('-> P%d S%d\n' % (task[2]['id'], task[3]))
+        process = Popen(args, stdout=PIPE)
+        computing[process.pid] = (task,process,'')
+
+solution = []
+for pid in computing:
+    task, process, commands = computing[pid]
+    process.kill()
+    computed.append( (task, commands) )
+
+for task, commands in computed:
+    _, problem, problem_json, seed = task
+    pId = problem_json['id']
+    solution.append( { 'problemId' : pId, 'seed' : seed,
+        'solution' : optimize(commands), 'tag' : stamp } )
+
+solution_json = json.dumps(solution)
+print(solution_json)
+
