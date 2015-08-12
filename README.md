@@ -96,6 +96,9 @@ Marc thought that having a working base of code would help others working on the
 
 It's the real reason of the GaupeToons split and it's noteworthy that Loic did this well while starting really late (basically Saturday night).
 
+### Misc
+During the contest, we were logged onto a #ups irc-channel where somebody arrived looking for informations concerning Unstoppable Power Supply (or something like this) but we were sadly unable to give him the informations he was looking for :o)
+
 ## Marc's review of the contest
 
 ### Pros
@@ -114,7 +117,7 @@ It's the real reason of the GaupeToons split and it's noteworthy that Loic did t
 
 So for me it was not a great year. But I'd say I'm biased because the contest teaser hinted at 2006 or 2007 type of contest (computational archeology, turing machines, ...) and I was really hyped. Therefore when the task was announced I felt quite disappointed.
 
-## JJ's review of the constest
+## JJ's review of the contest
 
 ### Pros
 
