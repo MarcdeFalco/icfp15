@@ -47,6 +47,7 @@ For gathering the different criteria into one unique value we needed a weighted 
 Finally, to handle multitasking and scheduling a little Python script was made. The approach was to try first the small board.
 
 ### Videos of some of ours solutions
+Click on the gif preview for watching the whole play on youtube.
 * Problem 0 seed 0  [![Problem 0 Seed 0](http://j.gifs.com/yEG3n7.gif)](https://www.youtube.com/watch?v=WnnuaNzEVeE)
 * Problem 3 seed 0 [![Problem 3 Seed 0](http://j.gifs.com/yobx4e.gif)](https://www.youtube.com/watch?v=4Xtz4zkwIt4)
 * Problem 3 seed 6094 [![Problem 3 seed 6094](http://j.gifs.com/vZ4Rz8.gif)](https://www.youtube.com/watch?v=fj8jl6IvFDM)
