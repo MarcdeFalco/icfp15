@@ -111,14 +111,15 @@ During the contest, we were logged onto a #ups irc-channel where somebody arrive
 
 ### Cons
 
-* a *simple* problem which in the end looked like a glorified algorithms 201 exercise
 * no last minute twist which made us fine tuning our algorithm instead of programming the last day
-* a lacking online leaderboard which was not well tested before, and with a 3 days contest you can't lose time fixing it
+* a lacking online leaderboard which was not well tested before, and with a 3 days contest you can't lose time fixing it. Power phrases should have been the twist. At first only reveal two phrases then more and more as the contest nears its end.
 * no reference implementation and with leaderboard issues it made tracking stupid mistakes harder
 * no clear instructions on what was taken into account for the final round, we didn't knew that the leaderboard was meaningful until late and we still have no clue to what will be important in the final problems: making lines or scoring power phrases
 * the whole power phrases charades were really not needed, finding special prefixes in 2007 challenge was cool because it was self-contained, everything was in the endo dna. Here we had to google for book we didn't want to know and do some trial-and-error to get which word was important on the wiki page. It has nothing to do with a *programming* challenge
 
-So for me it was not a great year. But I'd say I'm biased because the contest teaser hinted at 2006 or 2007 type of contest (computational archeology, turing machines, ...) and I was really hyped. Therefore when the task was announced I felt quite disappointed.
+I'd say I'm biased because the contest teaser hinted at 2006 or 2007 type of contest (computational archeology, turing machines, ...) and I was really hyped. Therefore when the task was announced I felt quite disappointed.
+
+Nonetheless the task is strong, and looking at it without the stress of the contest I was happy to improve my code.
 
 ## JJ's review of the contest
 
