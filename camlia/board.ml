@@ -29,11 +29,13 @@ let refresh b l =
 let print b =
     let w = Array.length b in
     let h = Array.length b.(0) in
+    Gui.start_board w h;
     for y = 0 to h-1 do
         for x = 0 to w-1 do
             Gui.plot_cell h {x=x;y=y} b.(x).(y)
         done
-    done
+    done;
+    Gui.end_board ()
     (*
         if shift
         then print_string " ";

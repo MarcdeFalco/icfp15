@@ -1,0 +1,6 @@
+*~
+_build/*
+camlia/_build/*
+*.swp
+*.native
+*.byte

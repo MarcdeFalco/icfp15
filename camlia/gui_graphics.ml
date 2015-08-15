@@ -105,7 +105,19 @@ let bonus_text s =
 
 let pause () = let _ = Graphics.read_key () in ()
 
-let get_color (r,g,b) = Graphics.rgb r g b
+let unit_color = [|
+    (255,0,0); (0,255,0); (0,0,255);
+    (255,255,0); (0,255,255); (255,0,255);
+    (128,128,0); (0,128,128); (128,0,128);
+    (255,128,0); (0,255,128); (255,0,128);
+    (128,255,0); (0,128,255); (128,0,255)
+    |]
+
+let nunit_color = Array.length unit_color
+
+let get_color id = 
+    let r,g,b = unit_color.(id mod nunit_color) in
+    Graphics.rgb r g b
 
 let image_id = ref 0 
 let flush pid seed = 
@@ -123,4 +135,11 @@ let set_color cs = ()
 let plot_cell h c cs = ()
 let score scr inc = ()
 *)
+let wait milli =
+  let sec = milli /. 1000. in
+  let tm1 = Unix.gettimeofday () in
+  while Unix.gettimeofday () -. tm1 < sec do () done
 
+let start_board _ _ = ()
+let end_board () = ()
+let interactive = true

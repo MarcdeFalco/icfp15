@@ -13,6 +13,7 @@ let phrases_string  =
     with End_of_file -> ());
     Array.of_list (List.rev !phrases_acc)
 
+
 (*
 = [| "ph'nglui mglw'nafh cthulhu r'lyeh wgah'nagl fhtagn."; "case nightmare green"; "john bigboote"; "blue hades"; "tsathoggua"; "planet 10";"ia! ia!";"yuggoth";"r'lyeh"; "ei!" |]
 *)
@@ -265,10 +266,6 @@ let best_leaf board bh leaves =
 
 exception CantSpawn
 
-let wait milli =
-  let sec = milli /. 1000. in
-  let tm1 = Unix.gettimeofday () in
-  while Unix.gettimeofday () -. tm1 < sec do () done
 
 let () =
     let p = Data.problem_from_file Sys.argv.(1) in
@@ -304,7 +301,13 @@ let () =
 
 
         let board = Board.init p.width p.height p.filled in
-        Board.print board;
+        if Gui.interactive
+        then Board.print board
+        else begin
+            Printf.eprintf "%%%% BEGIN Play\n\\begin{tikzpicture}\n";
+            Board.print board;
+            Printf.eprintf "%%%% END Play\n\\begin{tikzpicture}\n"
+        end;
         let seed = (i) in
         (*
         Printf.printf "(%d,\"" seed;
@@ -344,14 +347,40 @@ let () =
             let board_height = Board.height board in
 
             Piece.place board pi;
-            Board.refresh board pm;
-            (*
-            Board.print board;
-            *)
+            if Gui.interactive
+            then Board.refresh board pm
+            else begin
+                Printf.eprintf "%%%% BEGIN Spawn %d\n\\begin{tikzpicture}\n" loop;
+                Board.print board;
+                Gui.plot_point p.height pi.p_pivot;
+                Printf.eprintf "\\end{tikzpicture}\n%%%% END Spawn %d\n" loop;
+            end;
 
             Piece.unplace board pm;
 
+            let visited = Array.init
+                (20+p.width)
+                (fun x -> Array.init (20+p.height) (fun y -> Array.make 6 false))
+            in
+            let is_visited pos =
+                let {x=x;y=y},r = Piece.hash pos in
+                visited.(10+x).(10+y).(r)
+            in
+            let mark_visited pos =
+                let {x=x;y=y},r = Piece.hash pos in
+                visited.(10+x).(10+y).(r) <- true
+            in
+
+            (*
             let visited = ref [] in
+            let is_visited pos =
+                List.mem (Piece.hash pos) !visited
+            in
+            let mark_visited pos =
+                    visited := (Piece.hash pos) :: !visited;
+            in
+            *)
+            let tovisit = Queue.create () in
             let tovisit = Queue.create () in
             Queue.add (pi,[],[Piece.hash pi]) tovisit;
             let leaves = ref [] in
@@ -359,9 +388,9 @@ let () =
             while not (Queue.is_empty tovisit) do
                 let pos, path, hashes = Queue.take tovisit in
                 
-                if not (List.mem (Piece.hash pos) !visited) 
+                if not (is_visited pos)
                 then begin
-                    visited := (Piece.hash pos) :: !visited;
+                    mark_visited pos;
 
                     Array.iter (fun pow_id ->
                         try
@@ -407,15 +436,28 @@ let () =
             (* Printf.eprintf "Path %s\n" (string_of_path path); *)
             let rpos = ref pi in
             let wait_time = 25.0 in
-            Board.refresh board pm;
+            let step = ref 0 in
+            if Gui.interactive
+            then Board.refresh board pm;
             List.iter (fun exm -> 
                 match exm with
                 | Single m ->
-                    wait wait_time;
-                    Board.refresh board !rpos.p_members;
+                    incr step;
+                    if Gui.interactive
+                    then begin
+                        Gui.wait wait_time;
+                        Board.refresh board !rpos.p_members;
+                    end;
                     rpos := Piece.move !rpos m;
                     Piece.place board !rpos;
-                    Board.refresh board !rpos.p_members;
+                    if Gui.interactive
+                    then Board.refresh board !rpos.p_members
+                    else begin
+                        Printf.eprintf "%%%% BEGIN Step %d\n\\begin{tikzpicture}\n" !step;
+                        Board.print board;
+                        Gui.plot_point p.height !rpos.p_pivot;
+                        Printf.eprintf "%%%% END Step %d\n\\end{tikzpicture}\n" !step;
+                    end;
                     (* Board.print board; *)
                     Piece.unplace board !rpos.p_members;
                 | Power i ->
@@ -425,11 +467,22 @@ let () =
                     Gui.bonus_text 
                         (string_of_int phrases_occ.(i) ^ "x " ^ pt);
                     List.iter (fun m ->
-                        wait wait_time;
-                        Board.refresh board !rpos.p_members;
+                        incr step;
+                        if Gui.interactive
+                        then begin
+                            Gui.wait wait_time;
+                            Board.refresh board !rpos.p_members
+                        end;
                         rpos := Piece.move !rpos m;
                         Piece.place board !rpos;
-                        Board.refresh board !rpos.p_members;
+                        if Gui.interactive
+                        then Board.refresh board !rpos.p_members
+                        else begin
+                            Printf.eprintf "%%%% BEGIN Step %d\n\\begin{tikzpicture}\n" !step;
+                            Board.print board;
+                            Gui.plot_point 0 !rpos.p_pivot;
+                            Printf.eprintf "%%%% END Step %d\n\\end{tikzpicture}\n" !step;
+                        end;
                         (* Board.print board; *)
                         Piece.unplace board !rpos.p_members)
                         p;
@@ -437,7 +490,8 @@ let () =
                 ) (List.rev (List.tl full_path));
 
             Piece.lock board pos;
-            Board.refresh board pos.p_members;
+            if Gui.interactive
+            then Board.refresh board pos.p_members;
 
             Printf.printf "%s\n" (command_of_path path);
             flush stdout;
@@ -457,7 +511,16 @@ let () =
             let sub_power_score = score_phrases !phrases_total in
             Gui.score !score move_score sub_power_score;
             
-            if ls > 0 then Board.print board;
+            if ls > 0 
+            then begin
+                if Gui.interactive
+                then Board.print board
+                else begin
+                    Printf.eprintf "%%%% BEGIN Clear %d\n\\begin{tikzpicture}\n" ls;
+                    Board.print board;
+                    Printf.eprintf "%%%% END Clear\n\\end{tikzpicture}\n"
+                end
+            end;
             (* Gui.flush p.id seed; *)
             (* Piece.unplace board pi.p_members;*)
             (* Gui.plot_point p.height pos.p_pivot; *)

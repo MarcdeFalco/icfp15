@@ -29,27 +29,15 @@ let fits board members =
 let unplace board members = List.iter (fun c -> board.(c.x).(c.y) <- EMPTY)
     members
 
-let unit_color = [|
-    (255,0,0); (0,255,0); (0,0,255);
-    (255,255,0); (0,255,255); (255,0,255);
-    (128,128,0); (0,128,128); (128,0,128);
-    (255,128,0); (0,255,128); (255,0,128);
-    (128,255,0); (0,128,255); (128,0,255)
-    |]
-
-let nunit_color = Array.length unit_color
-
 let place board piece = 
     let id = piece.unt.id in
-    let col = Gui.get_color 
-        unit_color.(id mod nunit_color) in
+    let col = Gui.get_color id in
     List.iter (fun c -> board.(c.x).(c.y) <- CURRENT col)
         piece.p_members
  
 let lock board piece = 
     let id = piece.unt.id in
-    let col = Gui.get_color 
-        unit_color.(id mod nunit_color) in
+    let col = Gui.get_color id in
     List.iter (fun c -> board.(c.x).(c.y) <- LOCKED col)
         piece.p_members
     
